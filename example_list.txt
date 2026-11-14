@@ -1,0 +1,8 @@
+# Example shopping list. One item per line, optional quantity before or after the name.
+# Lines starting with # are ignored.
+Milch 2
+3 Zwiebeln
+Butter
+Müllbeutel 60l
+# "?" ignores the saved default this time and opens the search for manual selection:
+Joghurt 4 ?

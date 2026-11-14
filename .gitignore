@@ -1,0 +1,12 @@
+# Python
+.venv/
+__pycache__/
+.pytest_cache/
+
+# Personal data - never versioned
+# Chrome profile incl. REWE session cookies
+browser-profile/
+# Diagnostic output (network logs, page dumps)
+local/
+# Item database (default products)
+*.db
