@@ -99,3 +99,7 @@ part of the repository.
 - Receiving items to shop for through Siri commands, running on a home server (Raspberry Pi)
 - A database of recipes with their ingredient lists
 - A kitchen staples list to check the pantry against
+
+## License
+
+MIT, see [LICENSE](LICENSE).
