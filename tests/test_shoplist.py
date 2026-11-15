@@ -19,9 +19,28 @@ def test_quantity_last():
     assert parse_line("Zwiebeln 3x") == Entry("Zwiebeln", 3)
 
 
-def test_numbers_inside_names_are_not_quantities():
-    assert parse_line("Müllbeutel 60l") == Entry("Müllbeutel 60l", 1)
-    assert parse_line("2 Müllbeutel 60l") == Entry("Müllbeutel 60l", 2)
+def test_amounts_with_units_are_separated_from_the_name():
+    assert parse_line("Parmesan 80g") == Entry("Parmesan", 1, amount="80g")
+    assert parse_line("80 g Parmesan") == Entry("Parmesan", 1, amount="80 g")
+    assert parse_line("2 Sahne 200 ml") == Entry("Sahne", 2, amount="200 ml")
+    assert parse_line("Mehl 1,5 kg 2") == Entry("Mehl", 2, amount="1,5 kg")
+    assert parse_line("Milch 2 Liter") == Entry("Milch", 1, amount="2 Liter")
+    assert parse_line("Eier 10 Stück") == Entry("Eier", 1, amount="10 Stück")
+    assert parse_line("2 Müllbeutel 60l") == Entry("Müllbeutel", 2, amount="60l")
+
+
+def test_amount_and_choose_marker_combined():
+    assert parse_line("Parmesan 80g ?") == Entry("Parmesan", 1, choose=True, amount="80g")
+
+
+def test_unit_letters_inside_words_are_not_amounts():
+    assert parse_line("Gin 2") == Entry("Gin", 2)
+    assert parse_line("Kaffee 3in1") == Entry("Kaffee 3in1", 1)
+    assert parse_line("7up") == Entry("7up", 1)
+
+
+def test_line_with_only_an_amount_is_ignored():
+    assert parse_list("80g") == []
 
 
 def test_comments_and_empty_lines_are_ignored():

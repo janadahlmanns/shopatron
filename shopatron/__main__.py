@@ -38,6 +38,8 @@ def pick_in_browser(shop: ReweShop, overlay: Overlay, entry: Entry, current_defa
     shop.take_user_adds()  # discard cart changes that occurred before this point
     shop.open_search_page(entry.name)
     message = f"Bitte das passende Produkt für »{entry.name}« ({entry.quantity}×) in den Warenkorb legen.\n"
+    if entry.amount:
+        message += f"Menge laut Liste: {entry.amount}\n"
     if current_default:
         message += f"Bisheriger Standard: {current_default}\n"
     overlay.show(message + "Du kannst auch oben selbst anders suchen.", [("Überspringen", "skip")])
@@ -53,7 +55,9 @@ def pick_in_browser(shop: ReweShop, overlay: Overlay, entry: Entry, current_defa
 
 def handle_entry(shop: ReweShop, overlay: Overlay, db: ItemDB, entry: Entry) -> str:
     """Process one list entry. Returns a one-line result for the summary."""
-    print(f"\n=== {entry.quantity} x {entry.name}" + ("  (selbst auswählen)" if entry.choose else ""))
+    print(f"\n=== {entry.quantity} x {entry.name}"
+          + (f"  [{entry.amount}]" if entry.amount else "")
+          + ("  (selbst auswählen)" if entry.choose else ""))
     item = db.get(entry.name)
     product = None
 
@@ -127,7 +131,8 @@ def main(argv: list[str]) -> int:
                 summary.append("ABGEBROCHEN (Strg+C) - Rest der Liste nicht bearbeitet")
 
             shop.read_cart()  # leaves the cart page open for manual review
-            overlay.show("Fertig! ✓ Bereit zur Prüfung und Bestellung.\n\n" + "\n".join(summary))
+            overlay.show("Fertig! ✓ Bereit zur Prüfung und Bestellung.\n\n" + "\n".join(summary),
+                         closable=True)
 
         print("\n===== Zusammenfassung =====")
         for line in summary:

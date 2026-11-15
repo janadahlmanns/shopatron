@@ -57,6 +57,7 @@ If Chrome is installed in an unusual location, adjust `CHROME_CANDIDATES` in `st
 |---|---|
 | `Milch` | 1 × the default product for "Milch" |
 | `Milch 5`, `5 Milch`, `5x Milch`, `Milch x5` | 5 × the default product |
+| `Parmesan 80g`, `2 Sahne 200 ml` | amounts with a unit are not searched for; they are shown as a reminder while you pick the product |
 | `Milch 5 ?` (or `? Milch 5`, `Milch 5 -`) | ignore the default this time and pick the product yourself |
 | `# anything` | comment, ignored |
 
@@ -75,7 +76,8 @@ For each item on the list:
   your list, and a small box in the corner of the page asks whether to save it as the default.
   "No" buys it just this once and keeps the old default. "Skip" leaves the item out.
 
-At the end, the cart page opens with a summary. Review the cart and place the order yourself.
+At the end, the cart page opens with a summary (close it with ×). Review the cart and place
+the order yourself.
 
 To see all saved defaults:
 

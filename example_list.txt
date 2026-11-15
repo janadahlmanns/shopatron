@@ -3,6 +3,6 @@
 Milch 2
 3 Zwiebeln
 Butter
-Müllbeutel 60l
+Parmesan 80g
 # "?" ignores the saved default this time and opens the search for manual selection:
 Joghurt 4 ?

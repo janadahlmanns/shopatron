@@ -40,6 +40,29 @@ def test_message_is_rendered_as_text_not_html(page):
     assert page.get_by_text("<b>fett</b>").is_visible()
 
 
+def test_close_button_hides_box(page):
+    overlay = Overlay(page)
+    overlay.show("Fertig", closable=True)
+    page.get_by_role("button", name="Schließen").click()
+    assert not page.get_by_text("Fertig").is_visible()
+    assert overlay.poll() == "close"
+    assert not page.get_by_text("Fertig").is_visible()  # stays hidden on later polls
+
+
+def test_no_close_button_by_default(page):
+    overlay = Overlay(page)
+    overlay.show("Bitte auswählen", [("Überspringen", "skip")])
+    assert page.get_by_role("button", name="Schließen").count() == 0
+
+
+def test_long_message_scrolls_inside_box(page):
+    page.set_viewport_size({"width": 1200, "height": 600})
+    overlay = Overlay(page)
+    overlay.show("\n".join(f"Zeile {i}" for i in range(200)), closable=True)
+    box_height = page.locator(".box").bounding_box()["height"]
+    assert box_height < 600 * 0.75
+
+
 def test_hide_removes_box(page):
     overlay = Overlay(page)
     overlay.show("Hallo")

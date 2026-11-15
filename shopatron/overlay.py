@@ -20,13 +20,17 @@ CSS = """
        background: #fff; color: #222; border: 3px solid #2b7a3d; border-radius: 12px;
        box-shadow: 0 6px 24px rgba(0,0,0,.25); padding: 14px 16px;
        font: 15px/1.4 system-ui, sans-serif; }
-.head { font-weight: 700; color: #2b7a3d; margin-bottom: 6px; }
-.msg { white-space: pre-line; }
+.head { display: flex; justify-content: space-between; align-items: center;
+        font-weight: 700; color: #2b7a3d; margin-bottom: 6px; }
+.msg { white-space: pre-line; max-height: 50vh; overflow-y: auto; }
 .buttons { display: flex; gap: 8px; margin-top: 12px; }
 .buttons:empty { display: none; }
 button { flex: 1; font: inherit; padding: 8px 10px; border-radius: 8px; cursor: pointer;
          border: 1px solid #999; background: #f3f3f3; color: #222; }
 button.primary { background: #2b7a3d; border-color: #2b7a3d; color: #fff; font-weight: 600; }
+button.close { flex: none; border: none; background: none; padding: 0 4px;
+               font-size: 22px; line-height: 1; color: #666; }
+button.close:hover { color: #000; }
 """
 
 # Executed in the page: draws the box if missing or outdated, returns and clears a pending
@@ -46,9 +50,20 @@ SYNC_JS = """
     host.dataset.key = state.key;
     host.dataset.answer = '';
     const root = host.shadowRoot;
-    root.innerHTML = '<style></style><div class="box"><div class="head">🛒 Shopatron</div>'
+    root.innerHTML = '<style></style><div class="box"><div class="head"><span>🛒 Shopatron</span></div>'
                    + '<div class="msg"></div><div class="buttons"></div></div>';
     root.querySelector('style').textContent = css;
+    if (state.closable) {
+      const close = document.createElement('button');
+      close.className = 'close';
+      close.textContent = '×';
+      close.setAttribute('aria-label', 'Schließen');
+      close.addEventListener('click', () => {
+        root.querySelector('.box').style.display = 'none';
+        host.dataset.answer = 'close';
+      });
+      root.querySelector('.head').appendChild(close);
+    }
     root.querySelector('.msg').textContent = state.message;  // rendered as plain text, never as HTML
     const bar = root.querySelector('.buttons');
     for (const b of state.buttons) {
@@ -71,11 +86,15 @@ class Overlay:
         self.page = page
         self._state: dict | None = None
 
-    def show(self, message: str, buttons: list[tuple[str, str]] = ()) -> None:
-        """Display a message with optional buttons [(label, value), ...]; the first button is highlighted."""
+    def show(self, message: str, buttons: list[tuple[str, str]] = (), closable: bool = False) -> None:
+        """Display a message with optional buttons [(label, value), ...]; the first button is highlighted.
+
+        closable adds a close button (×) to the header; clicking it hides the box and yields "close".
+        """
         self._state = {
             "key": uuid.uuid4().hex,  # a new key forces a redraw
             "message": message,
+            "closable": closable,
             "buttons": [{"label": label, "value": value, "primary": i == 0}
                         for i, (label, value) in enumerate(buttons)],
         }
